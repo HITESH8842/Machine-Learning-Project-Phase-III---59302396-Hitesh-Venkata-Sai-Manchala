@@ -1,0 +1,169 @@
+# ============================================
+# CREATE FIGURES FOR FINAL REPORT
+# ============================================
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+# Create folder
+SAVE_FOLDER = "Figures"
+os.makedirs(SAVE_FOLDER, exist_ok=True)
+
+# ============================================
+# Figure 1 - Training Accuracy (Custom CNN)
+# ============================================
+
+plt.figure(figsize=(8,5))
+plt.plot(cnn_history.history['accuracy'], label='Training Accuracy')
+plt.plot(cnn_history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Custom CNN Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.grid(True)
+
+plt.savefig(os.path.join(SAVE_FOLDER,
+                         "Figure1_CustomCNN_Accuracy.png"),
+            dpi=300,
+            bbox_inches='tight')
+plt.show()
+
+
+# ============================================
+# Figure 2 - Training Loss (Custom CNN)
+# ============================================
+
+plt.figure(figsize=(8,5))
+plt.plot(cnn_history.history['loss'], label='Training Loss')
+plt.plot(cnn_history.history['val_loss'], label='Validation Loss')
+plt.title('Custom CNN Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.grid(True)
+
+plt.savefig(os.path.join(SAVE_FOLDER,
+                         "Figure2_CustomCNN_Loss.png"),
+            dpi=300,
+            bbox_inches='tight')
+plt.show()
+
+
+# ============================================
+# Figure 3 - Accuracy (MobileNetV2)
+# ============================================
+
+plt.figure(figsize=(8,5))
+plt.plot(transfer_history.history['accuracy'],
+         label='Training Accuracy')
+plt.plot(transfer_history.history['val_accuracy'],
+         label='Validation Accuracy')
+plt.title('MobileNetV2 Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.grid(True)
+
+plt.savefig(os.path.join(SAVE_FOLDER,
+                         "Figure3_MobileNetV2_Accuracy.png"),
+            dpi=300,
+            bbox_inches='tight')
+plt.show()
+
+
+# ============================================
+# Figure 4 - Loss (MobileNetV2)
+# ============================================
+
+plt.figure(figsize=(8,5))
+plt.plot(transfer_history.history['loss'],
+         label='Training Loss')
+plt.plot(transfer_history.history['val_loss'],
+         label='Validation Loss')
+plt.title('MobileNetV2 Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.grid(True)
+
+plt.savefig(os.path.join(SAVE_FOLDER,
+                         "Figure4_MobileNetV2_Loss.png"),
+            dpi=300,
+            bbox_inches='tight')
+plt.show()
+
+
+# ============================================
+# True Labels
+# ============================================
+
+test_generator.reset()
+
+y_true = test_generator.classes
+class_names = list(test_generator.class_indices.keys())
+
+
+# ============================================
+# Figure 5 - Confusion Matrix (Custom CNN)
+# ============================================
+
+cnn_pred = cnn_model.predict(test_generator)
+
+cnn_pred = np.argmax(cnn_pred, axis=1)
+
+cm = confusion_matrix(y_true, cnn_pred)
+
+plt.figure(figsize=(8,8))
+
+disp = ConfusionMatrixDisplay(cm,
+                              display_labels=class_names)
+
+disp.plot(cmap='Blues',
+          values_format='d')
+
+plt.title("Custom CNN Confusion Matrix")
+
+plt.savefig(os.path.join(SAVE_FOLDER,
+                         "Figure5_CustomCNN_CM.png"),
+            dpi=300,
+            bbox_inches='tight')
+
+plt.show()
+
+
+# ============================================
+# Figure 6 - Confusion Matrix (MobileNetV2)
+# ============================================
+
+test_generator.reset()
+
+mobile_pred = transfer_model.predict(test_generator)
+
+mobile_pred = np.argmax(mobile_pred, axis=1)
+
+cm = confusion_matrix(y_true,
+                      mobile_pred)
+
+plt.figure(figsize=(8,8))
+
+disp = ConfusionMatrixDisplay(cm,
+                              display_labels=class_names)
+
+disp.plot(cmap='Greens',
+          values_format='d')
+
+plt.title("MobileNetV2 Confusion Matrix")
+
+plt.savefig(os.path.join(SAVE_FOLDER,
+                         "Figure6_MobileNetV2_CM.png"),
+            dpi=300,
+            bbox_inches='tight')
+
+plt.show()
+
+print("="*50)
+print("All figures saved successfully!")
+print("Folder:", SAVE_FOLDER)
+print("="*50)
